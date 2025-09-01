@@ -1,11 +1,33 @@
 import { Injectable } from '@nestjs/common';
 import { CreateProdutoDto } from './dto/create-produto.dto';
 import { UpdateProdutoDto } from './dto/update-produto.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Product } from './entities/produto.entity';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class ProdutoService {
-  create(createProdutoDto: CreateProdutoDto) {
-    return 'This action adds a new produto';
+  constructor(
+    @InjectRepository(Product)
+    private productRepository: Repository<Product>,
+  ) {}
+
+  async create(createProductDto: CreateProdutoDto): Promise<Product> {
+    //Busca por um produto existente com o mesmo nome e lote
+    const existingProduct = await this.productRepository.findOne({
+      where: {
+        name: createProductDto.name,
+        batch: createProductDto.batch,
+      },
+    });
+
+    if (existingProduct) {
+      existingProduct.stock += createProductDto.stock;
+      return this.productRepository.save(existingProduct);
+    }
+
+    const newProduct = this.productRepository.create(createProductDto);
+    return this.productRepository.save(newProduct);
   }
 
   findAll() {
