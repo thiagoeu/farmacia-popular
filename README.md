@@ -24,7 +24,7 @@ Projeto de Farmácia Popular desenvolvido com o framework **NestJS**. O sistema 
 ## 📁 Estrutura do Projeto
 
 ```bash
-├── docker-compose.yml            # Configuração de containers Docker
+├── docker-compose.yml            # Configuração de container do banco de dados
 ├── src/                          # Código-fonte da aplicação
 │   ├── main.ts                   # Arquivo principal da aplicação
 │   ├── app.module.ts             # Módulo raiz
