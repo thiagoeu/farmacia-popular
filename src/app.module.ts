@@ -9,8 +9,19 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ProdutoModule } from './produto/produto.module';
 import { FuncionarioModule } from './funcionario/funcionario.module';
 
+import { ConfigModule } from '@nestjs/config';
+
 @Module({
-  imports: [TypeOrmModule.forRoot(databaseConfig), UsersModule, AuthModule, ProdutoModule, FuncionarioModule],
+  imports: [
+    TypeOrmModule.forRoot(databaseConfig),
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
+    UsersModule,
+    AuthModule,
+    ProdutoModule,
+    FuncionarioModule,
+  ],
   controllers: [AppController],
   providers: [AppService],
 })

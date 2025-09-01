@@ -11,7 +11,6 @@ import { LoginDto } from './dto/login.dto';
 import { Role } from 'src/shared/enums/role.enum';
 import { JwtService } from '@nestjs/jwt';
 import { CreateUserDto } from '../users/dto/create-user.dto';
-import { use } from 'passport';
 
 @Injectable()
 export class AuthService {
@@ -106,7 +105,7 @@ export class AuthService {
   async refreshToken(refreshToken: string) {
     try {
       const payload = this.jwtService.verify(refreshToken, {
-        secret: 'refresh-jwt-secret',
+        secret: process.env.REFRESH_JWT_SECRET || 'refresh-jwt-secret',
       });
 
       const user = await this.userRepository.findOne({
@@ -134,7 +133,7 @@ export class AuthService {
     };
 
     return this.jwtService.sign(payload, {
-      secret: 'jwt-secret',
+      secret: process.env.JWT_SECRET || 'jwt-secret',
       expiresIn: '15m',
     });
   }
@@ -145,7 +144,7 @@ export class AuthService {
     };
 
     return this.jwtService.sign(payload, {
-      secret: 'refresh-jwt-secret',
+      secret: process.env.REFRESH_JWT_SECRET || 'refresh-jwt-secret',
       expiresIn: '7d',
     });
   }
