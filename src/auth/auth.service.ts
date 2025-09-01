@@ -86,6 +86,8 @@ export class AuthService {
 
     // Atualizar o refresh token do usuário
     const token = this.generateToken(user);
+    user.refreshToken = token.refresh_token;
+    await this.userRepository.save(user);
     const { password, ...result } = user;
 
     return {

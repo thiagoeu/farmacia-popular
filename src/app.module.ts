@@ -6,9 +6,11 @@ import { AuthModule } from './auth/auth.module';
 
 import { databaseConfig } from './config/db.config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { ProdutoModule } from './produto/produto.module';
+import { FuncionarioModule } from './funcionario/funcionario.module';
 
 @Module({
-  imports: [TypeOrmModule.forRoot(databaseConfig), UsersModule, AuthModule],
+  imports: [TypeOrmModule.forRoot(databaseConfig), UsersModule, AuthModule, ProdutoModule, FuncionarioModule],
   controllers: [AppController],
   providers: [AppService],
 })
