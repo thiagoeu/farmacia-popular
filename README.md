@@ -92,3 +92,30 @@ Projeto de Farmácia Popular desenvolvido com o framework **NestJS**. O sistema 
 │   │   └── filters/
 │   │       └── all-exceptions.filter.ts
 ```
+
+## 🗄️ Banco de Dados
+
+Para rodar o banco de dados PostgreSQL localmente, utilize o Docker com o arquivo de configuração `docker-compose.yml` que está na raiz do projeto.
+
+### 🚀 Como subir o banco
+
+Na raiz do projeto, execute o comando:
+
+```bash
+docker-compose up -d
+
+```
+
+### 🛠️ Configurações do banco
+
+As configurações de conexão estão definidas no arquivo `src/config/db.config.ts` e utilizam as variáveis definidas no arquivo `.env`. Exemplo:
+
+```env
+DATABASE_HOST=localhost
+DATABASE_PORT=5432
+DATABASE_USER=postgres
+DATABASE_PASSWORD=postgres
+DATABASE_NAME=farmacia-popular
+
+
+```
