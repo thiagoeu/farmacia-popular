@@ -38,11 +38,13 @@ export class ProdutoController {
   }
 
   @Patch(':id')
+  @Roles(Role.ADMIN)
   update(@Param('id') id: string, @Body() updateProdutoDto: UpdateProdutoDto) {
     return this.produtoService.update(+id, updateProdutoDto);
   }
 
   @Delete(':id')
+  @Roles(Role.ADMIN)
   remove(@Param('id') id: string) {
     return this.produtoService.remove(+id);
   }
