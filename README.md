@@ -17,6 +17,8 @@ Projeto de Farmácia Popular desenvolvido com o framework **NestJS**. O sistema 
 - [class-transformer](https://github.com/typestack/class-transformer)
 - [Docker](https://www.docker.com/)
 - [PostgreSQL](https://www.postgresql.org/)
+- [Swagger](https://swagger.io/)
+- [Nest-Winston](https://www.npmjs.com/package/nest-winston) + [Moment Timezone](https://www.npmjs.com/package/moment-timezone)
 - Tratamento de erros com **Exception Filters** personalizados
 
 ---
@@ -24,73 +26,88 @@ Projeto de Farmácia Popular desenvolvido com o framework **NestJS**. O sistema 
 ## 📁 Estrutura do Projeto
 
 ```bash
-├── docker-compose.yml            # Configuração de container do banco de dados
-├── src/                          # Código-fonte da aplicação
-│   ├── main.ts                   # Arquivo principal da aplicação
-│   ├── app.module.ts             # Módulo raiz
-│   ├── app.controller.ts         # Controller principal
+├── docker-compose.yml            # Arquivo de configuração do Docker para o banco de dados
+
+├── src                           # Código-fonte principal da aplicação
 │   ├── app.controller.spec.ts    # Testes do controller principal
-│   ├── app.service.ts            # Serviço principal
-│
-│   ├── auth/                     # Módulo de autenticação
-│   │   ├── auth.controller.ts
-│   │   ├── auth.controller.spec.ts
-│   │   ├── auth.module.ts
-│   │   ├── auth.service.ts
-│   │   ├── decorators/
-│   │   │   ├── current-user.ts
-│   │   │   └── roles.decorators.ts
-│   │   ├── dto/
-│   │   │   └── login.dto.ts
-│   │   ├── guards/
-│   │   │   ├── jwt-auth.guard.ts
-│   │   │   └── roles.guard.ts
-│   │   └── strategies/
-│   │       └── jwt.strategy.ts
-│
-│   ├── config/                   # Arquivos de configuração
-│   │   └── db.config.ts
-│
-│   ├── funcionario/              # Módulo de funcionários
-│   │   ├── funcionario.controller.ts
-│   │   ├── funcionario.controller.spec.ts
-│   │   ├── funcionario.module.ts
-│   │   ├── funcionario.service.ts
-│   │   ├── funcionario.service.spec.ts
-│   │   ├── dto/
+│   ├── app.controller.ts         # Controller principal
+│   ├── app.module.ts             # Módulo raiz da aplicação
+│   ├── app.service.ts            # Serviço principal da aplicação
+
+│   ├── auth                      # Módulo de autenticação
+│   │   ├── auth.controller.spec.ts   # Testes do controller de autenticação
+│   │   ├── auth.controller.ts        # Controller responsável pelo login/autenticação
+│   │   ├── auth.module.ts            # Módulo de autenticação
+│   │   ├── auth.service.ts           # Serviço de autenticação
+│   │   ├── decorators                # Decorators personalizados
+│   │   │   ├── current-user.ts       # Decorator para acessar o usuário autenticado
+│   │   │   └── roles.decorators.ts   # Decorator para definir roles de acesso
+│   │   ├── dto
+│   │   │   └── login.dto.ts          # DTO para login
+│   │   ├── guards
+│   │   │   ├── jwt-auth.guard.ts     # Guard de autenticação JWT
+│   │   │   └── roles.guard.ts        # Guard de controle de acesso por role
+│   │   └── strategies
+│   │       └── jwt.strategy.ts       # Estratégia JWT usada pelo Passport
+
+│   ├── config                    # Arquivos de configuração da aplicação
+│   │   ├── db.config.ts          # Configuração do TypeORM + dotenv
+│   │   └── swagger.config.ts     # Configuração do Swagger (Documentação da API)
+
+│   ├── funcionario               # Módulo para gerenciamento de funcionários
+│   │   ├── dto                   # DTOs usados para entrada/validação de dados
 │   │   │   ├── create-funcionario.dto.ts
 │   │   │   └── update-funcionario.dto.ts
-│   │   ├── entities/
-│   │   │   └── funcionario.entity.ts
-│
-│   ├── produto/                  # Módulo de produtos
-│   │   ├── produto.controller.ts
-│   │   ├── produto.module.ts
-│   │   ├── produto.service.ts
-│   │   ├── dto/
+│   │   ├── entities
+│   │   │   └── funcionario.entity.ts   # Entidade do TypeORM para funcionário
+│   │   ├── funcionario.controller.spec.ts
+│   │   ├── funcionario.controller.ts
+│   │   ├── funcionario.module.ts
+│   │   ├── funcionario.service.spec.ts
+│   │   └── funcionario.service.ts
+
+│   ├── main.ts                  # Arquivo de bootstrap da aplicação (ponto de entrada)
+
+│   ├── produto                  # Módulo para gerenciamento de produtos
+│   │   ├── dto
 │   │   │   ├── create-produto.dto.ts
 │   │   │   └── update-produto.dto.ts
-│   │   ├── entities/
+│   │   ├── entities
 │   │   │   └── produto.entity.ts
-│
-│   ├── users/                    # Módulo de usuários
-│   │   ├── users.controller.ts
-│   │   ├── users.controller.spec.ts
-│   │   ├── users.module.ts
-│   │   ├── users.service.ts
-│   │   ├── users.service.spec.ts
-│   │   ├── dto/
-│   │   │   ├── create-user.dto.ts
-│   │   │   ├── list-all-users.dto.ts
-│   │   │   └── update-user.dto.ts
-│   │   ├── entities/
-│   │   │   └── user.entity.ts
-│
-│   ├── shared/                   # Recursos compartilhados
-│   │   ├── enums/
-│   │   │   └── role.enum.ts
-│   │   └── filters/
-│   │       └── all-exceptions.filter.ts
+│   │   ├── produto.controller.ts
+│   │   ├── produto.module.ts
+│   │   └── produto.service.ts
+
+│   ├── shared                   # Recursos compartilhados entre módulos
+│   │   ├── enums
+│   │   │   └── role.enum.ts         # Enum com roles de usuário (ex: ADMIN, USER)
+│   │   ├── filters
+│   │   │   └── all-exceptions.filter.ts # Filter para tratamento global de exceções
+│   │   └── middleware
+│   │       ├── logger.middleware.ts    # Middleware de logging com Winston + Moment Timezone
+│   │       └── logger.provider.ts      # Provider configurando o Winston logger
+
+│   └── users                   # Módulo de gerenciamento de usuários
+│       ├── dto
+│       │   ├── create-user.dto.ts
+│       │   ├── list-all-users.dto.ts
+│       │   └── update-user.dto.ts
+│       ├── entities
+│       │   └── user.entity.ts
+│       ├── users.controller.spec.ts
+│       ├── users.controller.ts
+│       ├── users.module.ts
+│       ├── users.service.spec.ts
+│       └── users.service.ts
+
+├── test
+│   ├── app.e2e-spec.ts         # Testes end-to-end
+│   └── jest-e2e.json           # Configuração do Jest para e2e
+
+├── tsconfig.build.json         # Configuração do TypeScript para build
+├── tsconfig.json               # Configuração global do TypeScript
+└── yarn.lock                   # Lockfile do Yarn para dependências
+
 ```
 
 ## 🗄️ Banco de Dados
@@ -119,3 +136,5 @@ DATABASE_NAME=farmacia-popular
 
 
 ```
+
+##
