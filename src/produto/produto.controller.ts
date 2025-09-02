@@ -15,9 +15,12 @@ import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { Roles } from 'src/auth/decorators/roles.decorators';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { Role } from 'src/shared/enums/role.enum';
+import { Paginate } from 'nestjs-paginate';
+import type { PaginateQuery, Paginated } from 'nestjs-paginate';
+import { Product } from './entities/produto.entity';
 
 @Controller('produto')
-@UseGuards(JwtAuthGuard, RolesGuard)
+// @UseGuards(JwtAuthGuard, RolesGuard)
 export class ProdutoController {
   constructor(private readonly produtoService: ProdutoService) {}
 
@@ -28,8 +31,8 @@ export class ProdutoController {
   }
 
   @Get()
-  findAll() {
-    return this.produtoService.findAll();
+  async findAll(@Paginate() query: PaginateQuery): Promise<Paginated<Product>> {
+    return this.produtoService.findAll(query);
   }
 
   @Get(':id')

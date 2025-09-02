@@ -11,7 +11,7 @@ import {
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { User } from './entities/user.entity';
+
 import { Paginate } from 'nestjs-paginate';
 import type { PaginateQuery, Paginated } from 'nestjs-paginate';
 import { ListAllUsersDto } from './dto/list-all-users.dto';
