@@ -1,14 +1,18 @@
 import { ConflictException, Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+
 import { CreateFuncionarioDto } from './dto/create-funcionario.dto';
 import { UpdateFuncionarioDto } from './dto/update-funcionario.dto';
 import { Funcionario } from './entities/funcionario.entity';
+
 import { paginate, Paginated, PaginateQuery } from 'nestjs-paginate';
-import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class FuncionarioService {
   constructor(
+    @InjectRepository(Funcionario)
     private readonly funcionarioRepository: Repository<Funcionario>,
   ) {}
   async create(createFuncionarioDto: CreateFuncionarioDto) {
@@ -40,7 +44,7 @@ export class FuncionarioService {
 
   async findAll(query: PaginateQuery): Promise<Paginated<Funcionario>> {
     const queryBuilder = this.funcionarioRepository
-      .createQueryBuilder('user')
+      .createQueryBuilder('funcionarios')
       .select([
         'user.id',
         'user.name',
