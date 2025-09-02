@@ -1,26 +1,130 @@
-import { Injectable } from '@nestjs/common';
+import { ConflictException, Injectable } from '@nestjs/common';
 import { CreateFuncionarioDto } from './dto/create-funcionario.dto';
 import { UpdateFuncionarioDto } from './dto/update-funcionario.dto';
+import { Funcionario } from './entities/funcionario.entity';
+import { paginate, Paginated, PaginateQuery } from 'nestjs-paginate';
+import { Repository } from 'typeorm';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class FuncionarioService {
-  create(createFuncionarioDto: CreateFuncionarioDto) {
-    return 'This action adds a new funcionario';
+  constructor(
+    private readonly funcionarioRepository: Repository<Funcionario>,
+  ) {}
+  async create(createFuncionarioDto: CreateFuncionarioDto) {
+    const funcionarioExists = await this.funcionarioRepository.findOne({
+      where: {
+        email: createFuncionarioDto.email,
+      },
+    });
+
+    if (funcionarioExists?.role === 'funcionario') {
+      throw new ConflictException('Funcionário já possui cadastro');
+    }
+
+    if (funcionarioExists?.role === 'usuario') {
+      throw new ConflictException(
+        'O funcionário já possui cadastro como usuário',
+      );
+    }
+
+    const salt = await bcrypt.genSalt();
+    createFuncionarioDto.password = await bcrypt.hash(
+      createFuncionarioDto.password,
+      salt,
+    );
+
+    const funcionario = this.funcionarioRepository.create(createFuncionarioDto);
+    return await this.funcionarioRepository.save(funcionario);
   }
 
-  findAll() {
-    return `This action returns all funcionario`;
+  async findAll(query: PaginateQuery): Promise<Paginated<Funcionario>> {
+    const queryBuilder = this.funcionarioRepository
+      .createQueryBuilder('user')
+      .select([
+        'user.id',
+        'user.name',
+        'user.email',
+        'user.role',
+        'user.createdAt',
+        'user.updatedAt',
+      ]);
+
+    const paginatedFuncionarios = await paginate<Funcionario>(
+      query,
+      queryBuilder,
+      {
+        sortableColumns: [
+          'name',
+          'salary',
+          'position',
+          'employeeId',
+          'email',
+          'role',
+          'createdAt',
+        ],
+        searchableColumns: ['name', 'email', 'position', 'salary'],
+        defaultSortBy: [['name', 'ASC']],
+        defaultLimit: 5,
+        maxLimit: 10,
+      },
+    );
+
+    return paginatedFuncionarios;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} funcionario`;
+  async findOne(id: number) {
+    const funcionario = await this.funcionarioRepository.findOneBy({ id });
+
+    if (!funcionario) {
+      throw new ConflictException(
+        'Usuário não encontrado - :id não encontrado',
+      );
+    }
+    const { password, refreshToken, ...result } = funcionario;
+    return result;
   }
 
-  update(id: number, updateFuncionarioDto: UpdateFuncionarioDto) {
-    return `This action updates a #${id} funcionario`;
+  async update(id: number, updateFuncionarioDto: UpdateFuncionarioDto) {
+    const user = await this.funcionarioRepository.findOneBy({ id });
+    if (!user) {
+      throw new ConflictException('Usuário não encontrado');
+    }
+
+    // Salvar campos que serão alterados
+    const changes: Partial<UpdateFuncionarioDto> = {};
+
+    if (updateFuncionarioDto.password) {
+      const salt = await bcrypt.genSalt();
+      changes.password = await bcrypt.hash(updateFuncionarioDto.password, salt);
+    }
+
+    // Copiar outros campos
+    Object.keys(updateFuncionarioDto).forEach((key) => {
+      if (updateFuncionarioDto[key] !== undefined && key !== 'password') {
+        changes[key] = updateFuncionarioDto[key];
+      }
+    });
+
+    changes['updatedAt'] = new Date();
+    const result = await this.funcionarioRepository.update(id, changes);
+
+    return result.affected
+      ? {
+          message: 'Funcioanario atualizado com sucesso',
+          updatedFields: changes,
+        }
+      : null;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} funcionario`;
+  async remove(id: number) {
+    const funcionario = await this.funcionarioRepository.findOneBy({ id });
+    if (!funcionario) {
+      throw new ConflictException('Usuário não encontrado');
+    }
+    const result = await this.funcionarioRepository.delete(id);
+    return result.affected
+      ? { message: 'Funcionario removido com sucesso' }
+      : null;
   }
 }
