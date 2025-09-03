@@ -137,4 +137,10 @@ DATABASE_NAME=farmacia-popular
 
 ```
 
-##
+## 📄 Documentação - Swagger
+
+Os endpoints podem ser visualizados através da rota:
+
+```bash
+localhost:3000/api
+```
