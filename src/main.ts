@@ -24,6 +24,9 @@ async function bootstrap() {
   // Filters
   app.useGlobalFilters(new AllExceptionsFilter());
 
+  // Configura o CORS
+  app.enableCors();
+
   // Inicia o servidor
   await app.listen(process.env.PORT ?? 3000);
 }

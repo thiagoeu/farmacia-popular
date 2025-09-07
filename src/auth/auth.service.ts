@@ -116,11 +116,9 @@ export class AuthService {
         throw new UnauthorizedException('Refresh token inválido');
       }
 
-      const accessToken = this.generateToken(user);
+      const tokens = this.generateToken(user);
 
-      return {
-        accessToken,
-      };
+      return tokens;
     } catch (e) {
       throw new UnauthorizedException('Refresh token inválido');
     }
