@@ -1,11 +1,12 @@
-import React from "react";
-import Container from "react-bootstrap/Container";
-import Navbar from "react-bootstrap/Navbar";
-import Nav from "react-bootstrap/Nav";
-import Dropdown from "react-bootstrap/Dropdown";
-import { useAuthStore } from "../store/authStore";
-import { useNavigate } from "react-router-dom";
-import { FaUserCircle } from "react-icons/fa"; // ícone do usuário
+import React from 'react';
+import Container from 'react-bootstrap/Container';
+import Navbar from 'react-bootstrap/Navbar';
+import Nav from 'react-bootstrap/Nav';
+import Dropdown from 'react-bootstrap/Dropdown';
+import { useAuthStore } from '../store/authStore';
+import { useNavigate } from 'react-router-dom';
+import { FaUserCircle } from 'react-icons/fa'; // ícone do usuário
+import { Button } from 'react-bootstrap';
 
 export const CustomNavbar: React.FC = () => {
   // Pega usuário e estado de autenticação do zustand
@@ -14,19 +15,19 @@ export const CustomNavbar: React.FC = () => {
 
   // Vai para a página de perfil
   const handleProfile = () => {
-    navigate("/profile");
+    navigate('/profile');
   };
 
   // Vai para a página de login
   const handleLogin = () => {
-    navigate("/login");
+    navigate('/login');
   };
 
   return (
     <Navbar className="bg-body-tertiary mb-3" data-bs-theme="dark">
       <Container>
         {/* Marca da Navbar */}
-        <Navbar.Brand onClick={() => navigate("/")}>
+        <Navbar.Brand onClick={() => navigate('/')}>
           Farmacia Popular
         </Navbar.Brand>
 
@@ -49,8 +50,8 @@ export const CustomNavbar: React.FC = () => {
                 <Dropdown.Item onClick={handleProfile}>Perfil</Dropdown.Item>
 
                 {/* Apenas admins veem essa opção */}
-                {user.role === "ADMIN" && (
-                  <Dropdown.Item onClick={() => navigate("/admin")}>
+                {user.role === 'ADMIN' && (
+                  <Dropdown.Item onClick={() => navigate('/admin')}>
                     Painel Admin
                   </Dropdown.Item>
                 )}
@@ -61,7 +62,9 @@ export const CustomNavbar: React.FC = () => {
             </Dropdown>
           ) : (
             // Se não estiver logado, link para login
-            <Nav.Link onClick={handleLogin}>Entrar</Nav.Link>
+            <Nav.Link onClick={handleLogin}>
+              <Button>Entrar</Button>
+            </Nav.Link>
           )}
         </Nav>
       </Container>

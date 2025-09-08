@@ -1,25 +1,11 @@
-import api from "../shared/api/api.ts";
-
-interface User {
-  id: string;
-  email: string;
-  role: string;
-  name?: string;
-  createdAt?: string;
-  updatedAt?: string;
-}
-
-interface LoginResponse {
-  user: User;
-  access_token: string;
-  refresh_token: string;
-}
+import type { LoginResponse } from '../shared/types/auth.ts';
+import api from '../shared/api/api.ts';
 
 export const login = async (
   email: string,
-  password: string
+  password: string,
 ): Promise<LoginResponse> => {
-  const response = await api.post<LoginResponse>("/auth/login", {
+  const response = await api.post<LoginResponse>('/auth/login', {
     email,
     password,
   });
@@ -27,7 +13,7 @@ export const login = async (
 };
 
 export const logout = () => {
-  localStorage.removeItem("access_token");
-  localStorage.removeItem("refresh_token");
-  window.location.href = "/login";
+  localStorage.removeItem('access_token');
+  localStorage.removeItem('refresh_token');
+  window.location.href = '/login';
 };

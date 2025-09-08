@@ -1,10 +1,10 @@
-import { create } from "zustand";
-import { persist } from "zustand/middleware";
+import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
 import {
   login as loginService,
   logout as logoutService,
-} from "../services/authService";
-import api from "../shared/api/api.ts";
+} from '../services/authService';
+import api from '../shared/api/api.ts';
 
 interface User {
   id: string;
@@ -28,7 +28,7 @@ interface AuthState {
 // Função para normalizar a resposta do backend
 const normalizeUserResponse = (data: any): User => {
   // Se o backend retornar { user: { ... } }, extrai o user
-  if (data.user && typeof data.user === "object" && data.user.id) {
+  if (data.user && typeof data.user === 'object' && data.user.id) {
     return data.user;
   }
   // Se já for o user diretamente, retorna como está
@@ -47,8 +47,8 @@ export const useAuthStore = create<AuthState>()(
           const response = await loginService(email, password);
           const { user: userData, access_token, refresh_token } = response;
 
-          localStorage.setItem("access_token", access_token);
-          localStorage.setItem("refresh_token", refresh_token);
+          localStorage.setItem('access_token', access_token);
+          localStorage.setItem('refresh_token', refresh_token);
 
           // Normaliza a resposta do backend
           const user = normalizeUserResponse(userData);
@@ -62,14 +62,14 @@ export const useAuthStore = create<AuthState>()(
 
       logout: () => {
         logoutService();
-        localStorage.removeItem("access_token");
-        localStorage.removeItem("refresh_token");
+        localStorage.removeItem('access_token');
+        localStorage.removeItem('refresh_token');
         set({ user: null, isAuthenticated: false, loading: false });
       },
 
       loadUser: async () => {
         try {
-          const token = localStorage.getItem("access_token");
+          const token = localStorage.getItem('access_token');
 
           if (!token) {
             set({ user: null, isAuthenticated: false, loading: false });
@@ -78,7 +78,7 @@ export const useAuthStore = create<AuthState>()(
 
           set({ loading: true });
 
-          const response = await api.get("/auth/profile");
+          const response = await api.get('/auth/profile');
 
           // Normaliza a resposta do backend
           const userData = response.data;
@@ -86,27 +86,19 @@ export const useAuthStore = create<AuthState>()(
 
           set({ user, isAuthenticated: true, loading: false });
         } catch (err) {
-          console.error("Erro ao carregar usuário:", err);
-          localStorage.removeItem("access_token");
-          localStorage.removeItem("refresh_token");
+          localStorage.removeItem('access_token');
+          localStorage.removeItem('refresh_token');
           set({ user: null, isAuthenticated: false, loading: false });
         }
       },
     }),
     {
-      name: "auth-storage",
+      name: 'auth-storage',
       partialize: (state) => ({
         user: state.user,
         isAuthenticated: state.isAuthenticated,
       }),
       // Migrator para corrigir estruturas antigas
-      migrate: (persistedState: any, version: number) => {
-        if (persistedState?.state?.user?.user) {
-          // Corrige a estrutura aninhada: { user: { user: { ... } } }
-          persistedState.state.user = persistedState.state.user.user;
-        }
-        return persistedState;
-      },
-    }
-  )
+    },
+  ),
 );
