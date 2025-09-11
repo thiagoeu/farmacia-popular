@@ -63,7 +63,7 @@ export const CustomNavbar: React.FC = () => {
           ) : (
             // Se não estiver logado, link para login
             <Nav.Link onClick={handleLogin}>
-              <Button>Entrar</Button>
+              <Button className="btn btn-primary">Fazer Login</Button>
             </Nav.Link>
           )}
         </Nav>
