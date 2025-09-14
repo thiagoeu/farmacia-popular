@@ -6,6 +6,7 @@ import {
   HttpStatus,
 } from '@nestjs/common';
 import { Response } from 'express';
+import moment from 'moment-timezone';
 
 @Catch() // captura qualquer exceção
 export class AllExceptionsFilter implements ExceptionFilter {
@@ -28,7 +29,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
       success: false,
       statusCode: status,
       message,
-      timestamp: new Date().toISOString(),
+      timestamp: moment().tz('America/Sao_Paulo').format('DD/MM/YYYY HH:mm:ss'),
     });
   }
 }
