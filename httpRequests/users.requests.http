@@ -1,0 +1,32 @@
+@baseUrl = http://localhost:3000
+
+### Listar usuários
+GET {{baseUrl}}/users
+Content-Type: application/json
+
+### Criar usuário
+POST {{baseUrl}}/users
+Content-Type: application/json
+
+{
+  "name": "Thiago",
+  "email": "thiago22@email.com",
+  "password": "123456"
+}
+
+### Buscar usuário pelo ID
+GET {{baseUrl}}/users/48
+Content-Type: application/json
+
+### Atualizar usuário
+PATCH {{baseUrl}}/users/48
+Content-Type: application/json
+
+{
+  "name": "Thiago Silva",
+  "password": "654321"
+}
+
+### Remover usuário
+DELETE {{baseUrl}}/users/48
+Content-Type: application/json

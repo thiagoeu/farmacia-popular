@@ -1,0 +1,33 @@
+@baseUrl = http://localhost:3000
+
+### Listar Produtos
+GET {{baseUrl}}/produto
+Content-Type: application/json
+
+### Criar Produto
+POST {{baseUrl}}/produto
+Content-Type: application/json
+
+{
+  "name": "Notebook Gamer",
+  "batch": "LoteA123",
+  "price": 3500.5,
+  "stock": 10,
+  "description": "High performance gaming notebook"
+}
+### Buscar produto pelo ID
+GET {{baseUrl}}/produto/48
+Content-Type: application/json
+
+### Atualizar produto
+PATCH {{baseUrl}}/produto/48
+Content-Type: application/json
+
+{
+  "name": "Notebook Gamer ASUS",
+  "price": 3600.5
+}
+
+### Remover produto
+DELETE {{baseUrl}}/produto/48
+Content-Type: application/json
