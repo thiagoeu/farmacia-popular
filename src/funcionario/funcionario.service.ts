@@ -8,6 +8,7 @@ import { Funcionario } from './entities/funcionario.entity';
 
 import { paginate, Paginated, PaginateQuery } from 'nestjs-paginate';
 import * as bcrypt from 'bcrypt';
+import { Role } from 'src/shared/enums/role.enum';
 
 @Injectable()
 export class FuncionarioService {
@@ -22,14 +23,8 @@ export class FuncionarioService {
       },
     });
 
-    if (funcionarioExists?.role === 'funcionario') {
-      throw new ConflictException('Funcionário já possui cadastro');
-    }
-
-    if (funcionarioExists?.role === 'usuario') {
-      throw new ConflictException(
-        'O funcionário já possui cadastro como usuário',
-      );
+    if (funcionarioExists) {
+      throw new ConflictException('Funcionario já cadastrado');
     }
 
     const salt = await bcrypt.genSalt();
@@ -38,7 +33,11 @@ export class FuncionarioService {
       salt,
     );
 
-    const funcionario = this.funcionarioRepository.create(createFuncionarioDto);
+    const funcionario = this.funcionarioRepository.create({
+      ...createFuncionarioDto,
+      role: Role.FUNCIONARIO,
+    });
+
     return await this.funcionarioRepository.save(funcionario);
   }
 
@@ -46,12 +45,12 @@ export class FuncionarioService {
     const queryBuilder = this.funcionarioRepository
       .createQueryBuilder('funcionarios')
       .select([
-        'user.id',
-        'user.name',
-        'user.email',
-        'user.role',
-        'user.createdAt',
-        'user.updatedAt',
+        'funcionarios.id',
+        'funcionarios.name',
+        'funcionarios.email',
+        'funcionarios.role',
+        'funcionarios.createdAt',
+        'funcionarios.updatedAt',
       ]);
 
     const paginatedFuncionarios = await paginate<Funcionario>(

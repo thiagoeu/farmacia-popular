@@ -1,0 +1,35 @@
+@baseUrl = http://localhost:3000
+
+### Listar usuários
+GET {{baseUrl}}/funcionario
+Content-Type: application/json
+
+### Criar usuário
+POST {{baseUrl}}/funcionario
+Content-Type: application/json
+
+{
+  "name": "Thiago Araujo",
+  "email": "t@email.com",
+  "password": "123456",
+  "salary": 3500,
+  "position": "Manager",
+  "employeeId": "EMP01031"
+}
+
+### Buscar usuário pelo ID
+GET {{baseUrl}}/funcionario/9
+Content-Type: application/json
+
+### Atualizar usuário
+PATCH {{baseUrl}}/funcionario/9
+Content-Type: application/json
+
+{
+  "name": "Thiago Silva",
+  "password": "654321"
+}
+
+### Remover usuário
+DELETE {{baseUrl}}/funcionario/48
+Content-Type: application/json

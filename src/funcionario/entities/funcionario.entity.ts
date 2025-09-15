@@ -8,5 +8,5 @@ export class Funcionario extends User {
   @Column()
   position: string;
   @Column({ unique: true })
-  employeeId: number;
+  employeeId: string;
 }

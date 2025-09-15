@@ -26,6 +26,6 @@ export class CreateFuncionarioDto extends CreateUserDto {
     minLength: 4,
   })
   @IsString()
-  @MinLength(4, { message: 'Employee number must be at least 4 characters' })
-  employeeNumber: string;
+  @MinLength(4, { message: 'Employee id must be at least 4 characters' })
+  employeeId: string;
 }
