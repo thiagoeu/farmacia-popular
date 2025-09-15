@@ -144,3 +144,32 @@ Os endpoints podem ser visualizados através da rota:
 ```bash
 localhost:3000/api
 ```
+
+## 🔐 Escopo de Acesso por Tipo de Usuário
+
+### 👤 Usuário Comum (`usuario`)
+
+- Pode criar sua própria conta.
+- Pode fazer login.
+- Pode listar produtos disponíveis.
+- Pode atualizar seu próprio perfil.
+- **Não pode** criar, atualizar ou excluir produtos.
+- **Não pode** visualizar ou gerenciar outros usuários.
+
+### 🧑‍💼 Funcionário (`funcionario`)
+
+- Pode fazer login.
+- Pode listar produtos.
+- Pode listar usuários.
+- Pode atualizar seu próprio perfil.
+- **Não pode** criar, atualizar ou deletar produtos.
+- **Não pode** deletar usuários.
+- **Não pode** criar, atualizar ou deletar novos admins.
+
+### 👑 Administrador (`admin`)
+
+- Acesso total a todos os recursos do sistema.
+- Pode criar, atualizar e excluir produtos.
+- Pode listar, criar, atualizar e deletar usuários.
+- Pode gerenciar contas de funcionários.
+- Pode acessar todos os endpoints da API.
